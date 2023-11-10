@@ -40,9 +40,9 @@ func QueryGET(r *gin.Engine, db *gorm.DB) {
 }
 
 // QueryPageGET 分页查询
-func QueryPageGET(r *gin.Engine, db *gorm.DB) {
+func QueryPageGET(r *gin.Engine, DB *gorm.DB) {
 	r.GET("api/user/list/", func(c *gin.Context) {
-		db = db.Session(&gorm.Session{NewDB: true}) //必须清空上次遗留的链式条件
+		db := DB.Session(&gorm.Session{NewDB: true})
 		var dataList []mysql_db.CrudList
 		var pageSize, pageNum int
 		pageSizeStr := c.Query("pageSize")
@@ -107,5 +107,4 @@ func QueryPageGET(r *gin.Engine, db *gorm.DB) {
 			})
 		}
 	})
-	db = db.Session(&gorm.Session{NewDB: true})
 }

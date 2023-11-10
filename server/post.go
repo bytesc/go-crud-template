@@ -6,8 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddPOST(r *gin.Engine, db *gorm.DB) {
+func AddPOST(r *gin.Engine, DB *gorm.DB) {
 	r.POST("api/user/add", func(c *gin.Context) {
+		db := DB.Session(&gorm.Session{NewDB: true})
 		var listRes mysql_db.CrudList
 		err := c.ShouldBindJSON(&listRes) //数据校验
 		if err != nil {                   //数据错
