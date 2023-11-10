@@ -2,7 +2,7 @@
 
 ✨基于 Go, gorm, gin 和 MySQL 和 vue3, axios 的简单信息管理系统模板✨📌含完整前后端：信息管理系统模板，后台管理系统模板，数据库管理系统模板。实现对数据库最基本的增删改查（CRUD）。📌前后端分离
 
-📌[配套前端项目地址]()
+📌[配套前端项目地址](https://github.com/bytesc/vue-crud-template)
 
 [个人网站：www.bytesc.top](http://www.bytesc.top) 
 
@@ -99,7 +99,7 @@ http://localhost:8088/ping
 ```js
 {"message":"请求成功"}
 ```
-如果希望看到界面，需要用到配套的前端项目📌[配套前端项目地址]()
+如果希望看到界面，需要用到配套的前端项目📌[配套前端项目地址](https://github.com/bytesc/vue-crud-template)
 
 ### 运行端口
 
