@@ -16,8 +16,8 @@ func PingGET(r *gin.Engine) {
 	})
 }
 
-func QueryGET(r *gin.Engine, db *gorm.DB) {
-	r.GET("api/user/list/:name", func(c *gin.Context) {
+func QueryGET(r *gin.RouterGroup, db *gorm.DB) {
+	r.GET("/list/:name", func(c *gin.Context) {
 		db = db.Session(&gorm.Session{NewDB: true})
 		name := c.Param("name")
 		var dataList []mysql_db.CrudList
@@ -40,8 +40,8 @@ func QueryGET(r *gin.Engine, db *gorm.DB) {
 }
 
 // QueryPageGET 分页查询
-func QueryPageGET(r *gin.Engine, DB *gorm.DB) {
-	r.GET("api/user/list/", func(c *gin.Context) {
+func QueryPageGET(r *gin.RouterGroup, DB *gorm.DB) {
+	r.GET("/list/", func(c *gin.Context) {
 		db := DB.Session(&gorm.Session{NewDB: true})
 		var dataList []mysql_db.CrudList
 		var pageSize, pageNum int

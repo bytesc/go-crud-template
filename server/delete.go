@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func DeletePOST(r *gin.Engine, DB *gorm.DB) {
-	r.POST("api/user/delete/:id", func(c *gin.Context) {
+func DeletePOST(r *gin.RouterGroup, DB *gorm.DB) {
+	r.POST("/delete/:id", func(c *gin.Context) {
 		db := DB.Session(&gorm.Session{NewDB: true})
 		var data []mysql_db.CrudList //切片类型，查询结果列表
 		id := c.Param("id")          //接收路径参数

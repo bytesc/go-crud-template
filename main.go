@@ -21,15 +21,16 @@ func main() {
 
 	server.PingGET(r)
 
-	server.AddPOST(r, db)
+	user := r.Group("/api/user")
+	server.AddPOST(user, db)
 
-	server.DeletePOST(r, db)
+	server.DeletePOST(user, db)
 
-	server.UpdatePOST(r, db)
+	server.UpdatePOST(user, db)
 
-	server.QueryGET(r, db)
+	server.QueryGET(user, db)
 
-	server.QueryPageGET(r, db)
+	server.QueryPageGET(user, db)
 
 	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
 	// http://127.0.0.1:8088/ping

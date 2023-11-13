@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-func UpdatePOST(r *gin.Engine, DB *gorm.DB) {
-	r.POST("api/user/update/:id/", func(c *gin.Context) {
+func UpdatePOST(r *gin.RouterGroup, DB *gorm.DB) {
+	r.POST("/update/:id/", func(c *gin.Context) {
 		db := DB.Session(&gorm.Session{NewDB: true})
 		var data mysql_db.CrudList
 		id := c.Param("id") //接收路径参数
