@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"fmt"
@@ -7,14 +7,6 @@ import (
 	"gorm.io/gorm"
 	"strconv"
 )
-
-func PingGET(r *gin.Engine) {
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "请求成功",
-		})
-	})
-}
 
 func QueryGET(r *gin.RouterGroup, db *gorm.DB) {
 	r.GET("/list/:name", func(c *gin.Context) {

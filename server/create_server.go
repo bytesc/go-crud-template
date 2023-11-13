@@ -15,6 +15,14 @@ func CreateServer() *gin.Engine {
 //// http://127.0.0.1:8080/ping
 ////fmt.Println(r)
 
+func PingGET(r *gin.Engine) {
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "请求成功",
+		})
+	})
+}
+
 func init() {
 
 }
