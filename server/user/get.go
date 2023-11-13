@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_crud/mysql_db"
 	"gorm.io/gorm"
@@ -72,7 +71,7 @@ func QueryPageGET(r *gin.RouterGroup, DB *gorm.DB) {
 		for key, values := range allQueries {
 			if key != "pageSize" && key != "pageNum" {
 				db.Where(key+" LIKE ?", "%"+values[0]+"%")
-				fmt.Println(key, values)
+				//fmt.Println(key, values)
 			}
 		}
 

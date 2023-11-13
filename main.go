@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"go_crud/mysql_db"
 	"go_crud/server"
+	"go_crud/server/midware"
 	"go_crud/server/user"
 )
 
@@ -16,13 +18,13 @@ func main() {
 	}
 
 	// 数据库迁移
-	//err = db.AutoMigrate(&mysql_db.CrudList{})
+	err = db.AutoMigrate(&mysql_db.CrudList{})
 
 	r := server.CreateServer()
-
 	server.PingGET(r)
 
 	userRouter := r.Group("/api/user")
+	userRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckAuth("user"))
 	user.AddPOST(userRouter, db)
 	user.DeletePOST(userRouter, db)
 	user.UpdatePOST(userRouter, db)
