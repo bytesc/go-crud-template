@@ -20,12 +20,21 @@ func AddPOST(r *gin.RouterGroup, DB *gorm.DB) {
 			//fmt.Println(err)
 		} else {
 			// 数据库操作，insert
-			db.Create(&listRes)
-			c.JSON(200, gin.H{
-				"msg":  "添加成功",
-				"data": listRes,
-				"code": "200",
-			})
+			result := db.Create(&listRes)
+			if result.Error != nil {
+				c.JSON(200, gin.H{
+					"msg":  "添加失败",
+					"data": result.Error,
+					"code": "400",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"msg":  "添加成功",
+					"data": listRes,
+					"code": "200",
+				})
+			}
+
 		}
 	})
 	return

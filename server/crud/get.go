@@ -27,7 +27,6 @@ func QueryGET(r *gin.RouterGroup, db *gorm.DB) {
 			})
 		}
 	})
-	db = db.Session(&gorm.Session{NewDB: true})
 }
 
 // QueryPageGET 分页查询

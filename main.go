@@ -26,7 +26,8 @@ func main() {
 	server.PingGET(r)
 
 	userRouter := r.Group("api/user")
-	user.LoginPost(userRouter)
+	user.LoginPost(userRouter, db)
+	user.SignUpPost(userRouter, db)
 
 	crudRouter := r.Group("/api/crud")
 	crudRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckAuth("crud"))

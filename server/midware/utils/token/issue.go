@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-func IssueHS(name string) (string, error) {
+func IssueHS(name string, expTime time.Time) (string, error) {
 	myClaims := UserClaims{
 		Name: name,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(expTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
