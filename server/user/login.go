@@ -2,11 +2,19 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_crud/server/midware/utils"
 )
 
 func LoginPost(r *gin.RouterGroup) {
 	r.POST("/login", func(c *gin.Context) {
-		utils.IssueUserToken("hello")
+		//signature, _ := token.IssueHS("hello")
+		//fmt.Println("签名内容",signature)
+		//err := token.CheckHS(signature)
+		//fmt.Println("验签",err)
+
+		//signature,_ := token.IssueRS("helloword")
+		//fmt.Println("签名内容",signature)
+		//err := token.CheckRS(signature)
+		//fmt.Println("验签",err)
+
 	})
 }
