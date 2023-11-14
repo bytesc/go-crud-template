@@ -7,6 +7,7 @@ import (
 	"go_crud/server"
 	"go_crud/server/crud"
 	"go_crud/server/midware"
+	"go_crud/server/user"
 )
 
 func main() {
@@ -24,13 +25,16 @@ func main() {
 	r := server.CreateServer()
 	server.PingGET(r)
 
-	userRouter := r.Group("/api/crud")
-	userRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckAuth("crud"))
-	crud.AddPOST(userRouter, db)
-	crud.DeletePOST(userRouter, db)
-	crud.UpdatePOST(userRouter, db)
-	crud.QueryGET(userRouter, db)
-	crud.QueryPageGET(userRouter, db)
+	userRouter := r.Group("api/user")
+	user.LoginPost(userRouter)
+
+	crudRouter := r.Group("/api/crud")
+	crudRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckAuth("crud"))
+	crud.AddPOST(crudRouter, db)
+	crud.DeletePOST(crudRouter, db)
+	crud.UpdatePOST(crudRouter, db)
+	crud.QueryGET(crudRouter, db)
+	crud.QueryPageGET(crudRouter, db)
 
 	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
 	// http://127.0.0.1:8088/ping

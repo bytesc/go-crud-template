@@ -48,6 +48,8 @@
 go get -u gorm.io/driver/mysql
 go get -u gorm.io/gorm
 go get -u github.com/gin-gonic/gin
+
+go get -u github.com/golang-jwt/jwt/v5
 ```
 
 ### 创建数据库

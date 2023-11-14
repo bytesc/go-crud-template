@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var token string = "123456"
+//var token string = "123456"
 
 func CheckAuth(param string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -20,6 +20,7 @@ func CheckAuth(param string) gin.HandlerFunc {
 		//	})
 		//	c.Abort() // 校验不通过，拦截请求
 		//}
+
 		c.Next() //执行下一个中间件
 	}
 }
