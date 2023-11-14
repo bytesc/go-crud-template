@@ -20,7 +20,7 @@ func main() {
 
 	// 数据库迁移
 	err = db.AutoMigrate(&mysql_db.CrudList{})
-	err = db.AutoMigrate(&mysql_db.AdminList{})
+	err = db.AutoMigrate(&mysql_db.UserList{})
 
 	r := server.CreateServer()
 	server.PingGET(r)
