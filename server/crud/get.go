@@ -1,4 +1,4 @@
-package user
+package crud
 
 import (
 	"github.com/gin-gonic/gin"
@@ -41,7 +41,7 @@ func QueryPageGET(r *gin.RouterGroup, DB *gorm.DB) {
 		if pageSizeStr != "" {
 			pageSizeInt, err := strconv.Atoi(pageSizeStr) //?pageSize=xxx 查询参数
 			pageSize = pageSizeInt
-			// 127.0.0.1:8080/user/list/?pageNum=2&pageSize=3
+			// 127.0.0.1:8080/crud/list/?pageNum=2&pageSize=3
 			if err != nil {
 				c.JSON(200, gin.H{
 					"msg":  "查询失败，pageNum参数格式错误",
