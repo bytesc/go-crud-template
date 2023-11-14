@@ -1,8 +1,6 @@
 package user
 
 import (
-	"crypto/sha256"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_crud/mysql_db"
 	"gorm.io/gorm"
@@ -41,13 +39,8 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 				adminData.Email = signupData.Email
 				adminData.LockedUntil = time.Now()
 
-				// Create the salted hash
-				hash := sha256.New()
-				hash.Write([]byte(signupData.Password))
-				hash.Write([]byte(HashSalt))
-				hashBytes := hash.Sum(nil)
-				//hashBytes := sha256.Sum256([]byte(signupData.password))
-				adminData.Password = fmt.Sprintf("%x", hashBytes)
+				//hashBytes := sha256.Sum256([]byte(signupData.Password))
+				adminData.Password = GetHash(signupData.Password)
 
 				result := db.Create(&adminData)
 				if result.Error != nil {
@@ -59,7 +52,7 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 				} else {
 					c.JSON(200, gin.H{
 						"msg":  "注册成功",
-						"data": adminData,
+						"data": adminData.Name,
 						"code": "200",
 					})
 				}

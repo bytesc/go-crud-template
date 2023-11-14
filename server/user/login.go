@@ -35,9 +35,10 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 					"code": "400",
 				})
 			} else {
-				if adminDataList[0].PasswordTry >= 10 && time.Now().Before(adminDataList[0].LockedUntil) {
+				if time.Now().Before(adminDataList[0].LockedUntil) {
+					timeTemplate1 := "2006-01-02 15:04:05"
 					c.JSON(200, gin.H{
-						"msg":  "账户已被锁定，请一小时后再试",
+						"msg":  "账户已被锁定到" + adminDataList[0].LockedUntil.Format(timeTemplate1),
 						"data": loginData.Name,
 						"code": "400",
 					})
@@ -60,6 +61,7 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 						adminDataList[0].PasswordTry++
 						if adminDataList[0].PasswordTry >= 10 {
 							adminDataList[0].LockedUntil = time.Now().Add(time.Hour)
+							adminDataList[0].PasswordTry = 0
 						}
 						db.Save(&adminDataList[0])
 						c.JSON(200, gin.H{
