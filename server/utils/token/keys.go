@@ -1,6 +1,6 @@
 package token
 
-var hs = HS{Key: "12345678abcdefg"}
+var Hs = HS{Key: "12345678abcdefg"}
 
 // rs256 生产环境务必替换以下两个key
 var rs = RS{

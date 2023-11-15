@@ -37,7 +37,7 @@ func IssueHS(data interface{}, expTime time.Time) (string, error) {
 		},
 	}
 
-	signature, err := hs.Encode(myClaims)
+	signature, err := Hs.Encode(myClaims)
 	//fmt.Println(name, signature, err)
 	//bytes, _ := base64.StdEncoding.DecodeString("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")
 	//fmt.Println(string(bytes))
@@ -46,7 +46,7 @@ func IssueHS(data interface{}, expTime time.Time) (string, error) {
 
 func CheckHS(signature string) error {
 	myClaims := UserClaims{}
-	err := hs.Decode(signature, &myClaims)
+	err := Hs.Decode(signature, &myClaims)
 	//fmt.Println(myClaims, err)
 	return err
 }

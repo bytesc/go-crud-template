@@ -50,7 +50,7 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 					c.JSON(200, gin.H{
 						"msg":  "注册成功",
 						"data": adminData.Name,
-						"code": "200",
+						"code": "234",
 					})
 				}
 			}

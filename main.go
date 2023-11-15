@@ -37,7 +37,7 @@ func main() {
 	user.SignUpPost(userRouter, db)
 
 	crudRouter := r.Group("/api/crud")
-	crudRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckAuth("crud"))
+	crudRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckLogin("crud"))
 	crud.AddPOST(crudRouter, db)
 	crud.DeletePOST(crudRouter, db)
 	crud.UpdatePOST(crudRouter, db)
