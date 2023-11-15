@@ -1,6 +1,9 @@
 package token
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"github.com/golang-jwt/jwt/v5"
+	"time"
+)
 
 //type JwtValidator interface {
 //	Encode(claims jwt.Claims) (string, error)
@@ -23,3 +26,32 @@ func (hs *HS) Decode(sign string, claims jwt.Claims) error {
 	})
 	return err
 }
+
+func IssueHS(name string, expTime time.Time) (string, error) {
+	myClaims := UserClaims{
+		Name: name,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	signature, err := hs.Encode(myClaims)
+	//fmt.Println(name, signature, err)
+	//bytes, _ := base64.StdEncoding.DecodeString("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")
+	//fmt.Println(string(bytes))
+	return signature, err
+}
+
+func CheckHS(signature string) error {
+	myClaims := UserClaims{}
+	err := hs.Decode(signature, &myClaims)
+	//fmt.Println(myClaims, err)
+	return err
+}
+
+//signature, _ := token.IssueHS("hello")
+//fmt.Println("签名内容",signature)
+//err := token.CheckHS(signature)
+//fmt.Println("验签",err)

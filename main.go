@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"go_crud/logger"
 	"go_crud/mysql_db"
 	"go_crud/server"
 	"go_crud/server/crud"
@@ -23,6 +25,11 @@ func main() {
 	err = db.AutoMigrate(&mysql_db.UserList{})
 
 	r := server.CreateServer()
+
+	log, _ := logger.InitLogger(zap.DebugLevel)
+	defer log.Sync()
+	r.Use(logger.GinLogger(log), logger.GinRecovery(log, true))
+
 	server.PingGET(r)
 
 	userRouter := r.Group("api/user")
