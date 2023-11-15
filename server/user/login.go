@@ -1,11 +1,10 @@
 package user
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_crud/mysql_db"
-	"go_crud/server/midware/utils/token"
+	"go_crud/server/user/utils"
+	"go_crud/server/utils/token"
 	"gorm.io/gorm"
 	"time"
 )
@@ -19,7 +18,6 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 	r.POST("/login", func(c *gin.Context) {
 		db := DB.Session(&gorm.Session{NewDB: true})
 		loginData := LoginForm{}
-		var adminDataList []mysql_db.UserList
 		err := c.ShouldBindJSON(&loginData)
 		if err != nil { //数据错
 			c.JSON(200, gin.H{
@@ -28,7 +26,7 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 				"code": "400",
 			})
 		} else {
-			db.Where("name = ?", loginData.Name).Find(&adminDataList)
+			adminDataList := utils.GetUserByName(loginData.Name, DB)
 			if len(adminDataList) == 0 { //没有查到
 				c.JSON(200, gin.H{
 					"msg":  "用户不存在",
@@ -44,12 +42,7 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 						"code": "400",
 					})
 				} else {
-					hash := sha256.New()
-					hash.Write([]byte(loginData.Password))
-					hash.Write([]byte(HashSalt))
-					hashBytes := hash.Sum(nil)
-					//hashBytes := sha256.Sum256([]byte(signupData.password))
-					loginPassword := fmt.Sprintf("%x", hashBytes)
+					loginPassword := utils.GetHash(loginData.Password)
 					if adminDataList[0].Password == loginPassword {
 						adminDataList[0].PasswordTry = 0
 						db.Save(&adminDataList[0])
