@@ -29,7 +29,7 @@ func (rs *RS) Decode(signature string, claims jwt.Claims) error {
 
 func IssueRS(name string) (string, error) {
 	myClaims := UserClaims{
-		Name: name,
+		Data: name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

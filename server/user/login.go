@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_crud/mysql_db"
+	"go_crud/server/midware/utils/token"
 	"gorm.io/gorm"
 	"time"
 )
@@ -73,15 +74,10 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 				}
 			}
 		}
-		//signature, _ := token.IssueHS("hello")
-		//fmt.Println("签名内容",signature)
-		//err := token.CheckHS(signature)
-		//fmt.Println("验签",err)
-
-		//signature,_ := token.IssueRS("helloword")
-		//fmt.Println("签名内容",signature)
-		//err := token.CheckRS(signature)
-		//fmt.Println("验签",err)
+		signature, _ := token.IssueHS("hello", time.Now().Add(time.Hour))
+		fmt.Println("签名内容", signature)
+		tokenErr := token.CheckHS(signature)
+		fmt.Println("验签", tokenErr == nil)
 
 	})
 }

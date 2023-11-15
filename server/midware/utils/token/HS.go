@@ -27,9 +27,9 @@ func (hs *HS) Decode(sign string, claims jwt.Claims) error {
 	return err
 }
 
-func IssueHS(name string, expTime time.Time) (string, error) {
+func IssueHS(data interface{}, expTime time.Time) (string, error) {
 	myClaims := UserClaims{
-		Name: name,
+		Data: data,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
