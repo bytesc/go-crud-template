@@ -25,21 +25,21 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 				"code": "400",
 			})
 		} else {
-			adminDataList := utils.GetUserByName(signupData.Name, DB)
-			if len(adminDataList) != 0 { //查到
+			userDataList := utils.GetUserByName(signupData.Name, DB)
+			if len(userDataList) != 0 { //查到
 				c.JSON(200, gin.H{
 					"msg":  "用户已经存在",
 					"data": signupData.Name,
 					"code": "400",
 				})
 			} else {
-				var adminData mysql_db.UserList
-				adminData.Name = signupData.Name
-				adminData.Email = signupData.Email
-				adminData.LockedUntil = time.Now()
+				var userData mysql_db.UserList
+				userData.Name = signupData.Name
+				userData.Email = signupData.Email
+				userData.LockedUntil = time.Now()
 				//hashBytes := sha256.Sum256([]byte(signupData.Password))
-				adminData.Password = utils.GetHash(signupData.Password)
-				result := utils.CreateUser(adminData, DB)
+				userData.Password = utils.GetHash(signupData.Password)
+				result := utils.CreateUser(userData, DB)
 				if result.Error != nil {
 					c.JSON(200, gin.H{
 						"msg":  "注册失败",
@@ -49,7 +49,7 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 				} else {
 					c.JSON(200, gin.H{
 						"msg":  "注册成功",
-						"data": adminData.Name,
+						"data": userData.Name,
 						"code": "234",
 					})
 				}

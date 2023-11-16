@@ -6,12 +6,18 @@ import (
 	"time"
 )
 
-func RecordPasswordWrong(adminDataList []mysql_db.UserList, DB *gorm.DB, tries uint) {
+func RecordPasswordWrong(adminData mysql_db.UserList, DB *gorm.DB, tries uint) {
 	db := DB.Session(&gorm.Session{NewDB: true})
-	adminDataList[0].PasswordTry = tries
-	if adminDataList[0].PasswordTry >= 10 {
-		adminDataList[0].LockedUntil = time.Now().Add(time.Hour)
-		adminDataList[0].PasswordTry = 0
+	adminData.PasswordTry = tries
+	if adminData.PasswordTry >= 10 {
+		adminData.LockedUntil = time.Now().Add(time.Hour)
+		adminData.PasswordTry = 0
 	}
-	db.Save(&adminDataList[0])
+	db.Save(&adminData)
+}
+
+func SetUserStatus(adminData mysql_db.UserList, DB *gorm.DB, status string) {
+	db := DB.Session(&gorm.Session{NewDB: true})
+	adminData.Status = status
+	db.Save(&adminData)
 }

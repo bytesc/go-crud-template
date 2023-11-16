@@ -29,4 +29,5 @@ type UserList struct {
 	Password    string    `gorm:"type: varchar(100); not null;" json:"password" binding:"required"`
 	PasswordTry uint      `json:"password_try"`
 	LockedUntil time.Time `json:"locked_until"`
+	Status      string    `json:"status"`
 }

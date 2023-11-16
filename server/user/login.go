@@ -24,34 +24,39 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 				"code": "400",
 			})
 		} else {
-			adminDataList := utils.GetUserByName(loginData.Name, DB)
-			if len(adminDataList) == 0 { //没有查到
+			userDataList := utils.GetUserByName(loginData.Name, DB)
+			if len(userDataList) == 0 { //没有查到
 				c.JSON(200, gin.H{
 					"msg":  "用户不存在",
 					"data": loginData.Name,
 					"code": "400",
 				})
 			} else {
-				if time.Now().Before(adminDataList[0].LockedUntil) {
+				if time.Now().Before(userDataList[0].LockedUntil) {
 					timeTemplate1 := "2006-01-02 15:04:05"
 					c.JSON(200, gin.H{
-						"msg":  "账户已被锁定到" + adminDataList[0].LockedUntil.Format(timeTemplate1),
+						"msg":  "账户已被锁定到" + userDataList[0].LockedUntil.Format(timeTemplate1),
 						"data": loginData.Name,
 						"code": "400",
 					})
 				} else {
 					loginPassword := utils.GetHash(loginData.Password)
-					if adminDataList[0].Password == loginPassword {
-						utils.RecordPasswordWrong(adminDataList, DB, 0)
+					if userDataList[0].Password == loginPassword {
+						utils.RecordPasswordWrong(userDataList[0], DB, 0)
+						utils.SetUserStatus(userDataList[0], DB, "in")
+						// 签发token
 						signature, _ := token.IssueHS(loginData.Name, time.Now().Add(time.Minute*10))
 						c.Header("new_token", signature)
+						signatureLong, _ := token.IssueHS(loginData.Name, time.Now().Add(time.Hour*24))
+						c.Header("new_long_token", signatureLong)
+						c.Header("name", loginData.Name)
 						c.JSON(200, gin.H{
 							"msg":  "登录成功",
 							"data": loginData.Name,
 							"code": "233",
 						})
 					} else {
-						utils.RecordPasswordWrong(adminDataList, DB, adminDataList[0].PasswordTry+1)
+						utils.RecordPasswordWrong(userDataList[0], DB, userDataList[0].PasswordTry+1)
 						c.JSON(200, gin.H{
 							"msg":  "密码错误",
 							"data": loginData.Name,
