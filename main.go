@@ -11,6 +11,7 @@ import (
 	"go_crud/server/files"
 	"go_crud/server/midware"
 	"go_crud/server/user"
+	"go_crud/server/utils"
 )
 
 func main() {
@@ -31,7 +32,10 @@ func main() {
 	defer log.Sync()
 	r.Use(logger.GinLogger(log), logger.GinRecovery(log, true))
 
-	server.PingGET(r)
+	utils.PingGET(r)
+
+	Router := r.Group("api/refresh", midware.CheckLogin("refresh", db))
+	utils.RefreshGET(Router)
 
 	userRouter := r.Group("api/user")
 	user.LoginPost(userRouter, db)

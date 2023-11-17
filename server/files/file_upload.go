@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_crud/server/utils/token"
 	"gorm.io/gorm"
-	"io"
 	"os"
 	"time"
 )
@@ -35,7 +34,7 @@ func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 		}
 		for _, file := range files {
 			if file.Size > 10*1024*1024 { // 文件大小超过10MB
-				c.JSON(200, gin.H{
+				c.JSON(400, gin.H{
 					"msg":  "文件过大",
 					"data": "文件大小超过10MB",
 					"code": "400",
@@ -46,7 +45,7 @@ func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 			if _, err := os.Stat(dir); os.IsNotExist(err) {
 				err = os.MkdirAll(dir, os.ModePerm)
 				if err != nil {
-					c.JSON(200, gin.H{
+					c.JSON(400, gin.H{
 						"msg":  "上传失败",
 						"data": err.Error(),
 						"code": "400",
@@ -59,31 +58,9 @@ func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 				t := time.Now()
 				filename = fmt.Sprintf("%s_%d", filename, t.UnixNano()/int64(time.Millisecond))
 			}
-			src, err := file.Open()
-			if err != nil {
-				c.JSON(200, gin.H{
-					"msg":  "上传失败",
-					"data": err.Error(),
-					"code": "400",
-				})
-				return
-			}
-			defer src.Close()
 
-			out, err := os.Create(filename)
-			if err != nil {
-				c.JSON(200, gin.H{
-					"msg":  "上传失败",
-					"data": err.Error(),
-					"code": "400",
-				})
-				return
-			}
-			defer out.Close()
-
-			_, err = io.Copy(out, src)
-			if err != nil {
-				c.JSON(200, gin.H{
+			if err := c.SaveUploadedFile(file, filename); err != nil {
+				c.JSON(400, gin.H{
 					"msg":  "文件上传失败",
 					"data": err.Error(),
 					"code": "400",
