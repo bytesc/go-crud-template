@@ -1,0 +1,2 @@
+{"level":"info","ts":1700223967.8898447,"msg":"/api/files/upload","status":200,"method":"POST","path":"/api/files/upload","query":"","ip":"127.0.0.1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0","errors":"","cost":0.0048687}
+{"level":"info","ts":1700223990.3593047,"msg":"/api/files/upload","status":200,"method":"POST","path":"/api/files/upload","query":"","ip":"127.0.0.1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0","errors":"","cost":0.0010403}

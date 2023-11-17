@@ -49,7 +49,15 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 
 		// 检查token是否即将过期，如果是，则续签token
 		claims := token.UserClaims{}
-		token.Rs.Decode(tokenData, &claims)
+		err = token.Rs.Decode(tokenData, &claims)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "解码token失败",
+				"data": err.Error(),
+				"code": "444",
+			})
+			return
+		}
 		if time.Until(claims.RegisteredClaims.ExpiresAt.Time) < 8*time.Minute {
 			// 验证longtoken
 			longTokenData := c.GetHeader("long_token")

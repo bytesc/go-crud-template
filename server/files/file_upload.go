@@ -5,24 +5,83 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_crud/server/utils/token"
 	"gorm.io/gorm"
+	"io"
 	"os"
 	"time"
 )
 
 func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 	r.POST("/upload", func(c *gin.Context) {
-		form, _ := c.MultipartForm()
+		form, err := c.MultipartForm()
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "获取表单失败",
+				"data": err.Error(),
+				"code": "400",
+			})
+			return
+		}
 		files := form.File["file"]
 		tokenData := c.GetHeader("token")
 		claims := token.UserClaims{}
-		token.Rs.Decode(tokenData, &claims)
+		err = token.Rs.Decode(tokenData, &claims)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "解码token失败",
+				"data": err.Error(),
+				"code": "444",
+			})
+			return
+		}
 		for _, file := range files {
-			filename := "./uploaded_files/" + claims.Data.(string) + "/" + file.Filename
+			if file.Size > 10*1024*1024 { // 文件大小超过10MB
+				c.JSON(200, gin.H{
+					"msg":  "文件过大",
+					"data": "文件大小超过10MB",
+					"code": "400",
+				})
+				return
+			}
+			dir := "./stores/uploaded_files/" + claims.Data.(string)
+			if _, err := os.Stat(dir); os.IsNotExist(err) {
+				err = os.MkdirAll(dir, os.ModePerm)
+				if err != nil {
+					c.JSON(200, gin.H{
+						"msg":  "上传失败",
+						"data": err.Error(),
+						"code": "400",
+					})
+					return
+				}
+			}
+			filename := dir + "/" + file.Filename
 			if _, err := os.Stat(filename); err == nil {
 				t := time.Now()
 				filename = fmt.Sprintf("%s_%d", filename, t.UnixNano()/int64(time.Millisecond))
 			}
-			err := c.SaveUploadedFile(file, filename)
+			src, err := file.Open()
+			if err != nil {
+				c.JSON(200, gin.H{
+					"msg":  "上传失败",
+					"data": err.Error(),
+					"code": "400",
+				})
+				return
+			}
+			defer src.Close()
+
+			out, err := os.Create(filename)
+			if err != nil {
+				c.JSON(200, gin.H{
+					"msg":  "上传失败",
+					"data": err.Error(),
+					"code": "400",
+				})
+				return
+			}
+			defer out.Close()
+
+			_, err = io.Copy(out, src)
 			if err != nil {
 				c.JSON(200, gin.H{
 					"msg":  "文件上传失败",

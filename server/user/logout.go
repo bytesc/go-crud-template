@@ -22,7 +22,15 @@ func LogoutGet(r *gin.RouterGroup, DB *gorm.DB) {
 			return
 		}
 		claims := token.UserClaims{}
-		token.Rs.Decode(tokenData, &claims)
+		err = token.Rs.Decode(tokenData, &claims)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "解码token失败",
+				"data": err.Error(),
+				"code": "444",
+			})
+			return
+		}
 		logoutName := claims.Data.(string)
 		userDataList := utils.GetUserByName(logoutName, DB)
 		if len(userDataList) == 0 {
