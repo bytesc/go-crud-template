@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go_crud/mysql_db"
@@ -12,7 +13,7 @@ import (
 type SignupForm struct {
 	Name     string `validate:"required,alphanum,min=3,max=50"`
 	Email    string `validate:"required,email,max=50"`
-	Password string `validate:"required,ascii,min=8,max=50"`
+	Password string `validate:"required"`
 }
 
 func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
@@ -30,7 +31,7 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 			err := validate.Struct(signupData)
 			if err != nil {
 				c.JSON(200, gin.H{
-					"msg":  "用户名长度需大于3，密码长度需大于8, 邮箱需有效",
+					"msg":  "用户名长度需大于3，邮箱需有效",
 					"data": err.Error(),
 					"code": "400",
 				})
@@ -47,8 +48,18 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 					userData.Name = signupData.Name
 					userData.Email = signupData.Email
 					userData.LockedUntil = time.Now()
+					rawPassword, _ := utils.RsaDecode(signupData.Password)
+					fmt.Println(rawPassword, len(rawPassword))
+					if len(rawPassword) > 50 || len(rawPassword) < 8 {
+						c.JSON(200, gin.H{
+							"msg":  "密码长度需在8和50之间",
+							"data": "",
+							"code": "400",
+						})
+						return
+					}
+					userData.Password = utils.GetHash(rawPassword)
 					//hashBytes := sha256.Sum256([]byte(signupData.Password))
-					userData.Password = utils.GetHash(signupData.Password)
 					result := utils.CreateUser(userData, DB)
 					if result.Error != nil {
 						c.JSON(200, gin.H{

@@ -1,9 +1,11 @@
-package token
+package utils
 
-var Hs = HS{Key: "12345678abcdefg"}
+type RsaKey struct {
+	PublicKey  string
+	PrivateKey string
+}
 
-// Rs rs256 生产环境务必替换以下两个key
-var Rs = RS{
+var KeyForPwd = RsaKey{
 	PublicKey: `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu1SU1LfVLPHCozMxH2Mo

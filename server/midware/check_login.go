@@ -35,7 +35,7 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 		}
 
 		// 验证token
-		err := token.CheckHS(tokenData)
+		err := token.CheckRS(tokenData)
 		//fmt.Println(tokenData)
 		if err != nil {
 			c.JSON(200, gin.H{
@@ -49,11 +49,11 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 
 		// 检查token是否即将过期，如果是，则续签token
 		claims := token.UserClaims{}
-		token.Hs.Decode(tokenData, &claims)
+		token.Rs.Decode(tokenData, &claims)
 		if time.Until(claims.RegisteredClaims.ExpiresAt.Time) < 8*time.Minute {
 			// 验证longtoken
 			longTokenData := c.GetHeader("long_token")
-			err := token.CheckHS(longTokenData)
+			err := token.CheckRS(longTokenData)
 			if err != nil {
 				c.JSON(200, gin.H{
 					"msg":  "距离上次登录过长，请重新登陆",
@@ -94,7 +94,7 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 				return
 			}
 			//签发新token
-			newToken, _ := token.IssueHS(claims.Data.(string), time.Now().Add(time.Minute*10))
+			newToken, _ := token.IssueRS(claims.Data.(string), time.Now().Add(time.Minute*10))
 			//fmt.Println(newToken)
 			c.Header("new_token", newToken)
 		}

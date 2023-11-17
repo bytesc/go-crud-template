@@ -40,14 +40,15 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 						"code": "400",
 					})
 				} else {
-					loginPassword := utils.GetHash(loginData.Password)
+					rawPassword, _ := utils.RsaDecode(loginData.Password)
+					loginPassword := utils.GetHash(rawPassword)
 					if userDataList[0].Password == loginPassword {
 						utils.RecordPasswordWrong(userDataList[0], DB, 0)
 						utils.SetUserStatus(userDataList[0], DB, "in")
 						// 签发token
-						signature, _ := token.IssueHS(loginData.Name, time.Now().Add(time.Minute*10))
+						signature, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Minute*10))
 						c.Header("new_token", signature)
-						signatureLong, _ := token.IssueHS(loginData.Name, time.Now().Add(time.Hour*24))
+						signatureLong, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Hour*24))
 						c.Header("new_long_token", signatureLong)
 						c.Header("name", loginData.Name)
 						c.JSON(200, gin.H{

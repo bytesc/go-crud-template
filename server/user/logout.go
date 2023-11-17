@@ -10,7 +10,7 @@ import (
 func LogoutGet(r *gin.RouterGroup, DB *gorm.DB) {
 	r.GET("logout/", func(c *gin.Context) {
 		tokenData := c.GetHeader("token")
-		err := token.CheckHS(tokenData)
+		err := token.CheckRS(tokenData)
 		//fmt.Println(tokenData)
 		if err != nil {
 			c.JSON(200, gin.H{
@@ -22,14 +22,14 @@ func LogoutGet(r *gin.RouterGroup, DB *gorm.DB) {
 			return
 		}
 		claims := token.UserClaims{}
-		token.Hs.Decode(tokenData, &claims)
+		token.Rs.Decode(tokenData, &claims)
 		logoutName := claims.Data.(string)
 		userDataList := utils.GetUserByName(logoutName, DB)
 		if len(userDataList) == 0 {
 			c.JSON(200, gin.H{
 				"msg":  "用户不存在",
 				"data": logoutName,
-				"code": "400",
+				"code": "444",
 			})
 			return
 		}

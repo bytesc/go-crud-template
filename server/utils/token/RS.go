@@ -1,6 +1,7 @@
 package token
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -14,9 +15,13 @@ func (rs *RS) Encode(claims jwt.Claims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	pKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(rs.PrivateKey))
 	if err != nil {
+		fmt.Println(err.Error())
 		return "", err
 	}
 	signature, err := token.SignedString(pKey)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	return signature, err
 }
 
@@ -24,19 +29,25 @@ func (rs *RS) Decode(signature string, claims jwt.Claims) error {
 	_, err := jwt.ParseWithClaims(signature, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwt.ParseRSAPublicKeyFromPEM([]byte(rs.PublicKey))
 	})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	return err
 }
 
-func IssueRS(name string) (string, error) {
+func IssueRS(data interface{}, expTime time.Time) (string, error) {
 	myClaims := UserClaims{
-		Data: name,
+		Data: data,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
 	}
-	signature, err := rs.Encode(myClaims)
+	signature, err := Rs.Encode(myClaims)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	//fmt.Println(signature, err)
 	//bytes, _ := base64.StdEncoding.DecodeString(signature)
 	//fmt.Println(string(bytes))
@@ -45,7 +56,7 @@ func IssueRS(name string) (string, error) {
 
 func CheckRS(signature string) error {
 	myClaims := UserClaims{}
-	err := rs.Decode(signature, &myClaims)
+	err := Rs.Decode(signature, &myClaims)
 	//fmt.Println(myClaims, err)
 	return err
 }
