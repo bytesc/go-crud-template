@@ -31,7 +31,7 @@ func SignUpPost(r *gin.RouterGroup, DB *gorm.DB) {
 			err := validate.Struct(signupData)
 			if err != nil {
 				c.JSON(200, gin.H{
-					"msg":  "用户名长度需大于3，邮箱需有效",
+					"msg":  "数据验证不通过，邮箱需有效",
 					"data": err.Error(),
 					"code": "400",
 				})

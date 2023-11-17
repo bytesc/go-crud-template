@@ -8,6 +8,7 @@ import (
 	"go_crud/mysql_db"
 	"go_crud/server"
 	"go_crud/server/crud"
+	"go_crud/server/files"
 	"go_crud/server/midware"
 	"go_crud/server/user"
 )
@@ -45,6 +46,10 @@ func main() {
 	crud.UpdatePOST(crudRouter, db)
 	crud.QueryGET(crudRouter, db)
 	crud.QueryPageGET(crudRouter, db)
+
+	filesRouter := r.Group("/api/files")
+	filesRouter.Use(gin.Logger(), gin.Recovery(), midware.CheckLogin("files", db))
+	files.FileUploadPOST(filesRouter, db)
 
 	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
 	// http://127.0.0.1:8088/ping
