@@ -57,7 +57,7 @@ func ChangePwdPost(r *gin.RouterGroup, DB *gorm.DB) {
 						c.JSON(200, gin.H{
 							"msg":  "修改成功",
 							"data": Data.Name,
-							"code": "200",
+							"code": "234",
 						})
 					} else {
 						utils.RecordPasswordWrong(userDataList[0], DB, userDataList[0].PasswordTry+1)

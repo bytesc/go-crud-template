@@ -9,7 +9,7 @@ func RefreshGET(r *gin.RouterGroup) {
 		c.JSON(200, gin.H{
 			"msg":  "刷新",
 			"data": "",
-			"code": "200",
+			"code": "201",
 		})
 	})
 }

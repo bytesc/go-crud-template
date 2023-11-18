@@ -71,7 +71,7 @@ func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 		c.JSON(200, gin.H{
 			"msg":  "文件上传成功",
 			"data": "",
-			"code": "200",
+			"code": "201",
 		})
 	})
 }
