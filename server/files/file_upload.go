@@ -53,11 +53,12 @@ func FileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 					return
 				}
 			}
-			filename := dir + "/" + file.Filename
-			if _, err := os.Stat(filename); err == nil {
-				t := time.Now()
-				filename = fmt.Sprintf("%s_%d", filename, t.UnixNano()/int64(time.Millisecond))
-			}
+			t := time.Now()
+			filename := dir + "/" + fmt.Sprintf("%d_%s", t.UnixNano()/int64(time.Millisecond), file.Filename)
+			//if _, err := os.Stat(filename); err == nil {
+			//	t := time.Now()
+			//	filename = fmt.Sprintf("%d_%s", t.UnixNano()/int64(time.Millisecond), filename)
+			//}
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				c.JSON(400, gin.H{
