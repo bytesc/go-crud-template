@@ -12,9 +12,9 @@ import (
 )
 
 type File struct {
-	Name    string
-	Time    string
-	RawName string
+	Name    string `json:"name"`
+	Time    string `json:"time"`
+	RawName string `json:"raw_name"`
 }
 
 func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
@@ -34,6 +34,14 @@ func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
 		path := "./stores/uploaded_files/" + claims.Data.(string)
 		// 获取文件夹下所有文件名
 		var files []File
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			c.JSON(200, gin.H{
+				"msg":  "文件不存在",
+				"data": "",
+				"code": "400",
+			})
+			return
+		}
 		err = filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 			if !info.IsDir() {
 				split := strings.Split(info.Name(), "_")
@@ -58,6 +66,89 @@ func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
 		c.JSON(200, gin.H{
 			"msg":  "文件列表获取成功",
 			"data": files,
+			"code": "200",
+		})
+	})
+}
+
+func FileDownload(r *gin.RouterGroup, DB *gorm.DB) {
+	r.GET("/download/:filename", func(c *gin.Context) {
+		// 从请求中获取文件名
+		filename := c.Param("filename")
+
+		// 从请求头中获取token
+		tokenData := c.GetHeader("token")
+		claims := token.UserClaims{}
+		err := token.Rs.Decode(tokenData, &claims)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "解码token失败",
+				"data": err.Error(),
+				"code": "444",
+			})
+			return
+		}
+
+		// 构造文件路径
+		path := "./stores/uploaded_files/" + claims.Data.(string) + "/" + filename
+
+		// 检查文件是否存在
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			c.JSON(200, gin.H{
+				"msg":  "文件不存在",
+				"code": "400",
+			})
+			return
+		}
+
+		// 提供文件下载
+		c.File(path)
+	})
+}
+
+func FileDelete(r *gin.RouterGroup, DB *gorm.DB) {
+	r.POST("/delete/:filename", func(c *gin.Context) {
+		// 从请求中获取文件名
+		filename := c.Param("filename")
+
+		// 从请求头中获取token
+		tokenData := c.GetHeader("token")
+		claims := token.UserClaims{}
+		err := token.Rs.Decode(tokenData, &claims)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "解码token失败",
+				"data": err.Error(),
+				"code": "444",
+			})
+			return
+		}
+
+		// 构造文件路径
+		path := "./stores/uploaded_files/" + claims.Data.(string) + "/" + filename
+
+		// 检查文件是否存在
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			c.JSON(200, gin.H{
+				"msg":  "文件不存在",
+				"code": "400",
+			})
+			return
+		}
+
+		// 删除文件
+		err = os.Remove(path)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"msg":  "删除文件失败",
+				"data": err.Error(),
+				"code": "400",
+			})
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"msg":  "文件删除成功",
 			"code": "200",
 		})
 	})

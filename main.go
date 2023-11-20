@@ -57,6 +57,8 @@ func main() {
 	files.FileUploadPOST(filesRouter, db)
 	files.BigFileUploadPOST(filesRouter, db)
 	files.FileListGet(filesRouter, db)
+	files.FileDownload(filesRouter, db)
+	files.FileDelete(filesRouter, db)
 
 	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
 	// http://127.0.0.1:8088/ping
