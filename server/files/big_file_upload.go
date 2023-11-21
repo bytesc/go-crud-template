@@ -5,20 +5,23 @@ import (
 	"go_crud/server/utils/token"
 	"gorm.io/gorm"
 	"io"
+	"net/url"
 	"os"
 )
 
 func BigFileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 	r.POST("/big_upload", func(c *gin.Context) {
-		file, err := c.FormFile("file")
-		filename := c.Request.FormValue("filename")
+		//file, err := c.FormFile("file")
+		//filename := c.Request.FormValue("filename")
+
+		filenameEncoded := c.GetHeader("filename")
+		filename, err := url.QueryUnescape(filenameEncoded)
 		if err != nil {
 			c.JSON(200, gin.H{
-				"msg":  "获取文件失败",
+				"msg":  "文件名解码失败，需要URL编码",
 				"data": err.Error(),
 				"code": "400",
 			})
-			return
 		}
 
 		tokenData := c.GetHeader("token")
@@ -60,7 +63,7 @@ func BigFileUploadPOST(r *gin.RouterGroup, DB *gorm.DB) {
 		defer out.Close()
 
 		// 读取上传的文件
-		in, err := file.Open()
+		in := c.Request.Body
 		if err != nil {
 			c.JSON(400, gin.H{
 				"msg":  "文件读取失败",

@@ -15,6 +15,7 @@ type File struct {
 	Name    string `json:"name"`
 	Time    string `json:"time"`
 	RawName string `json:"raw_name"`
+	Size    int64  `json:"size"`
 }
 
 func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
@@ -47,9 +48,11 @@ func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
 				split := strings.Split(info.Name(), "_")
 				timestamp, _ := strconv.ParseInt(split[0], 10, 64)
 				tm := time.Unix(timestamp/1000, 0)
-				files = append(files, File{Name: strings.Join(split[1:], "_"),
+				files = append(files, File{
+					Name:    strings.Join(split[1:], "_"),
 					Time:    tm.Format("2006-01-02 15:04:05"),
 					RawName: info.Name(),
+					Size:    info.Size(),
 				})
 			}
 			return nil
