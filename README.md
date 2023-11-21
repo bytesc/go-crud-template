@@ -57,6 +57,7 @@ go get -u go.uber.org/zap
 go get github.com/go-playground/validator/v10
 
 go get github.com/spf13/viper
+go get github.com/gin-gonic/gin/binding@v1.9.1
 ```
 
 ### 创建数据库
