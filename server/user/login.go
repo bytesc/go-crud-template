@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"go_crud/server/user/utils"
 	"go_crud/server/utils/token"
 	"gorm.io/gorm"
@@ -46,9 +47,11 @@ func LoginPost(r *gin.RouterGroup, DB *gorm.DB) {
 						utils.RecordPasswordWrong(userDataList[0], DB, 0)
 						utils.SetUserStatus(userDataList[0], DB, "in")
 						// 签发token
-						signature, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Minute*10))
+						tokenDuration := time.Duration(viper.GetInt("token.shortDuration"))
+						longDuration := time.Duration(viper.GetInt("token.longDuration"))
+						signature, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Minute*tokenDuration))
 						c.Header("new_token", signature)
-						signatureLong, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Hour*24))
+						signatureLong, _ := token.IssueRS(loginData.Name, time.Now().Add(time.Minute*longDuration))
 						c.Header("new_long_token", signatureLong)
 						c.Header("name", loginData.Name)
 						c.JSON(200, gin.H{

@@ -1,0 +1,19 @@
+server:
+  Addr: 0.0.0.0
+  Port: 8088
+
+db:
+  DriverName: mysql
+  Database: crud-list
+  Port: 3306
+  UserName: root
+  Password: 123456
+  Host: 127.0.0.1
+  Charset: utf8mb4
+
+# token 签发配置
+token:
+  shortDuration: 30   # token 有效期（分钟），多久无操作就退出
+  refreshDuration: 5  # 多久续签一次
+  longDuration: 1440  # 长 token，多久必须重新登陆
+

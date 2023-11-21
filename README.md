@@ -55,6 +55,8 @@ go get -u github.com/golang-jwt/jwt/v5
 go get -u go.uber.org/zap
 
 go get github.com/go-playground/validator/v10
+
+go get github.com/spf13/viper
 ```
 
 ### 创建数据库

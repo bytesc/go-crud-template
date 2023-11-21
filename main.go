@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"go_crud/cmd"
 	"go_crud/logger"
 	"go_crud/mysql_db"
 	"go_crud/server"
@@ -15,17 +17,20 @@ import (
 )
 
 func main() {
+	//配置相关
+	defer cmd.Clean()
+	cmd.Start()
 
+	//数据库相关
 	db, err := mysql_db.ConnectToDatabase()
 	if err != nil {
 		fmt.Println("Error connecting to database:", err)
 		return
 	}
-
-	// 数据库迁移
 	err = db.AutoMigrate(&mysql_db.CrudList{})
 	err = db.AutoMigrate(&mysql_db.UserList{})
 
+	// 服务相关
 	r := server.CreateServer()
 
 	log, _ := logger.InitLogger(zap.DebugLevel)
@@ -60,8 +65,10 @@ func main() {
 	files.FileDownload(filesRouter, db)
 	files.FileDelete(filesRouter, db)
 
-	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
+	//r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
 	// http://127.0.0.1:8088/ping
 	//fmt.Println(r)
+
+	r.Run(viper.GetString("server.addr") + ":" + viper.GetString("server.port"))
 
 }

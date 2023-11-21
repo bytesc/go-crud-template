@@ -15,6 +15,8 @@ go get -u gorm.io/gorm
 go get -u github.com/gin-gonic/gin
 
 go get -u github.com/golang-jwt/jwt/v5
+
+# go mod tidy  # 去除不必要的依赖
 ```
 
 ### 运行

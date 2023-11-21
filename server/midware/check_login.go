@@ -2,6 +2,7 @@ package midware
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"go_crud/server/user/utils"
 	"go_crud/server/utils/token"
 	"gorm.io/gorm"
@@ -58,7 +59,9 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
-		if time.Until(claims.RegisteredClaims.ExpiresAt.Time) < 8*time.Minute {
+		tokenDuration := time.Duration(viper.GetInt("token.shortDuration"))
+		refreshDuration := time.Duration(viper.GetInt("token.refreshDuration"))
+		if time.Until(claims.RegisteredClaims.ExpiresAt.Time) < (tokenDuration-refreshDuration)*time.Minute {
 			// 验证longtoken
 			longTokenData := c.GetHeader("long_token")
 			err := token.CheckRS(longTokenData)
@@ -102,7 +105,7 @@ func CheckLogin(param string, DB *gorm.DB) gin.HandlerFunc {
 				return
 			}
 			//签发新token
-			newToken, _ := token.IssueRS(claims.Data.(string), time.Now().Add(time.Minute*10))
+			newToken, _ := token.IssueRS(claims.Data.(string), time.Now().Add(tokenDuration*time.Minute))
 			//fmt.Println(newToken)
 			c.Header("new_token", newToken)
 		}
