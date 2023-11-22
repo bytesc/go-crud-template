@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -32,6 +33,7 @@ func main() {
 
 	// 服务相关
 	r := server.CreateServer()
+	r.Use(cors.Default()) //解决跨域
 
 	log, _ := logger.InitLogger(zap.DebugLevel)
 	defer log.Sync()
