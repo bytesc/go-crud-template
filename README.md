@@ -1,6 +1,8 @@
 # go-crud-template
 
-✨基于 Go, gorm, gin 和 MySQL 和 vue3, axios 的简单信息管理系统模板✨📌含完整前后端：信息管理系统模板，后台管理系统模板，数据库管理系统模板。实现对数据库最基本的增删改查（CRUD）。📌前后端分离
+✨基于 Go, gorm, gin 和 MySQL 和 vue3, axios 的简单信息管理系统模板✨📌含完整前后端，项目在线demo：信息管理系统模板，后台管理系统模板，数据库管理系统模板。实现令牌签验，非对称加密，通过 Web 应用完成对数据库的增删改查(CRUD)，文件流的上传和下载。📌前后端分离
+
+📌[在线演示链接](http://bytesc.top:8009)
 
 📌[配套前端项目地址](https://github.com/bytesc/vue-crud-template)
 
@@ -11,6 +13,22 @@
 🔔 如有项目相关问题，欢迎在本项目提出`issue`，我一般会在 24 小时内回复。
 
 ## 效果展示
+
+### 文件流
+
+文件流上传
+
+![](./docs/readme_img/imgf1.png)
+
+文件流下载
+
+![](./docs/readme_img/imgf2.png)
+
+文件列表
+
+![](./docs/readme_img/imgfl.png)
+
+### CRUD
 
 ![](./docs/readme_img/img1.png)
 
@@ -26,9 +44,10 @@
 
 ![](./docs/readme_img/img4.png)
 
-全局遮罩的登录界面
 
-![](./docs/readme_img/img5.png)
+### 用户登录
+
+![](./docs/readme_img/imgu.png)
 
 面包屑导航
 
@@ -43,6 +62,7 @@
 - `MySQL 8.0.31`
 
 ### 安装依赖
+（非必要，后续运行时候也会自动安装）
 ```bash
 # go mod download
 # go get -u gorm.io/driver/sqlite
@@ -67,43 +87,52 @@ go get github.com/gin-gonic/gin/binding@v1.9.1
 create database  数据库名 default charset utf8mb4;
 ```
 
-导入示例数据表
-```bash
-mysql -u数据库用户名 -p数据库密码 -D数据库名 < ./mysql_backup/crud-list.sql
-```
-
 ### 连接数据库
-`./mysql_db/connect_db.go` 第15行附近，修改dsn字符串。
 
-`数据库用户名`:`数据库密码`@tcp(`数据库ip或域名`:`数据库端口`)/`数据库名`?charset=utf8mb4&parseTime=True&loc=Local
+`./conf/config.yaml` 为项目配置文件
 
-```go
-func ConnectToDatabase() (*gorm.DB, error) {
-	//链接数据库
-	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := "root:123456@tcp(127.0.0.1:3306)/crud-list?charset=utf8mb4&parseTime=True&loc=Local"
-    //...............
-}
+修改其中
+```yaml
+db:
+  DriverName: mysql
+  Database: crud-list
+  Port: 3306
+  UserName: root
+  Password: 123456
+  Host: 127.0.0.1
+  Charset: utf8mb4
 ```
 
-如果需要使用其它数据库，例如 `PostgreSQL, SQLite, SQL Server`。参考 [grom 官方文档 数据库连接](https://gorm.io/zh_CN/docs/connecting_to_the_database.html)
+如果需要使用其它数据库，例如 `PostgreSQL, SQLite, SQL Server`。`./mysql_db/connect_db.go` 为数据库配置文件。修改方法，参考 [grom 官方文档 数据库连接](https://gorm.io/zh_CN/docs/connecting_to_the_database.html)
+
+### 配置端口
+
+`./conf/config.yaml` 
+```yaml
+server:
+  Addr: 0.0.0.0
+  Port: 8008
+```
+这里 `0.0.0.0` 代表运行来自所有 ip 的访问
 
 ### 运行
 
-编译：
+编译（会自动安装依赖）：
 ```bash
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
 go build # 整个文件夹
 # go build main.go # 单个文件
 ```
 
 运行：
 ```bash
-.\go_crud.exe
+.\go_crud
 ```
 
 浏览器输入 url:
 ```txt
-http://localhost:8088/ping
+http://localhost:8008/ping
 ```
 看到以下内容代表服务运行成功
 ```js
@@ -111,23 +140,10 @@ http://localhost:8088/ping
 ```
 如果希望看到界面，需要用到配套的前端项目📌[配套前端项目地址](https://github.com/bytesc/vue-crud-template)
 
-### 运行端口
-
-`./main.go` 第34行附近。如果端口号被占用，可以修改此处。
-```go
-	r.Run("0.0.0.0:8088") // 监听并在 0.0.0.0:8088 上启动服务
-	// http://127.0.0.1:8088/ping
-```
 
 ### gin gorm 官方文档
 - https://gorm.io/zh_CN/docs
 - https://gin-gonic.com/zh-cn/docs
-
-
-
-## 接口文档
-
-[接口文档 `docs/api.md`](./docs/api.md)
 
 
 # 开源许可证

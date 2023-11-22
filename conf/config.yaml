@@ -1,6 +1,6 @@
 server:
   Addr: 0.0.0.0
-  Port: 8088
+  Port: 8008
 
 db:
   DriverName: mysql

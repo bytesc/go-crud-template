@@ -37,7 +37,7 @@ func FileListGet(r *gin.RouterGroup, DB *gorm.DB) {
 		var files []File
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			c.JSON(200, gin.H{
-				"msg":  "文件不存在",
+				"msg":  "没有文件",
 				"data": "",
 				"code": "400",
 			})
